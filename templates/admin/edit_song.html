@@ -1,0 +1,142 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}Edit Song{% endblock %}
+
+{% block content %}
+    <div class="max-w-4xl mx-auto">
+        <div class="md:flex md:items-center md:justify-between mb-6">
+            <div class="flex-1 min-w-0">
+                <h1 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+                    Edit Song
+                </h1>
+                <p class="mt-1 text-sm text-gray-500">Update song details - ID: {{ song.id }}</p>
+            </div>
+            <div class="mt-4 flex md:mt-0 md:ml-4">
+                <a href="{{ url_for('admin_songs') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    Back to Songs
+                </a>
+            </div>
+        </div>
+
+        <div class="bg-white shadow rounded-lg">
+            <form method="POST" action="{{ url_for('admin_edit_song', song_id=song.id) }}" class="p-6 space-y-6">
+                <div class="grid grid-cols-1 gap-6">
+                    <!-- Title -->
+                    <div>
+                        <label for="title" class="block text-sm font-medium text-gray-700">
+                            Title <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="title" id="title" required 
+                               value="{{ song.title }}"
+                               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    </div>
+
+                    <!-- Artist -->
+                    <div>
+                        <label for="artist" class="block text-sm font-medium text-gray-700">
+                            Artist <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="artist" id="artist" required 
+                               value="{{ song.artist }}"
+                               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    </div>
+
+                    <!-- Album -->
+                    <div>
+                        <label for="album" class="block text-sm font-medium text-gray-700">
+                            Album
+                        </label>
+                        <input type="text" name="album" id="album" 
+                               value="{{ song.album or '' }}"
+                               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    </div>
+
+                    <!-- Genre and Year -->
+                    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                        <div>
+                            <label for="genre" class="block text-sm font-medium text-gray-700">
+                                Genre <span class="text-red-500">*</span>
+                            </label>
+                            <select name="genre" id="genre" required
+                                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                <option value="">Select genre</option>
+                                <option value="Pop" {% if song.genre == 'Pop' %}selected{% endif %}>Pop</option>
+                                <option value="Rock" {% if song.genre == 'Rock' %}selected{% endif %}>Rock</option>
+                                <option value="Hip-Hop" {% if song.genre == 'Hip-Hop' %}selected{% endif %}>Hip-Hop</option>
+                                <option value="Rap" {% if song.genre == 'Rap' %}selected{% endif %}>Rap</option>
+                                <option value="Jazz" {% if song.genre == 'Jazz' %}selected{% endif %}>Jazz</option>
+                                <option value="Classical" {% if song.genre == 'Classical' %}selected{% endif %}>Classical</option>
+                                <option value="Electronic" {% if song.genre == 'Electronic' %}selected{% endif %}>Electronic</option>
+                                <option value="Country" {% if song.genre == 'Country' %}selected{% endif %}>Country</option>
+                                <option value="R&B" {% if song.genre == 'R&B' %}selected{% endif %}>R&B</option>
+                                <option value="Blues" {% if song.genre == 'Blues' %}selected{% endif %}>Blues</option>
+                                <option value="Reggae" {% if song.genre == 'Reggae' %}selected{% endif %}>Reggae</option>
+                                <option value="Metal" {% if song.genre == 'Metal' %}selected{% endif %}>Metal</option>
+                                <option value="Folk" {% if song.genre == 'Folk' %}selected{% endif %}>Folk</option>
+                                <option value="Indie" {% if song.genre == 'Indie' %}selected{% endif %}>Indie</option>
+                                <option value="Soul" {% if song.genre == 'Soul' %}selected{% endif %}>Soul</option>
+                                <option value="Other" {% if song.genre == 'Other' %}selected{% endif %}>Other</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="year" class="block text-sm font-medium text-gray-700">
+                                Year
+                            </label>
+                            <input type="number" name="year" id="year" min="1900" max="2100"
+                                   value="{{ song.year or '' }}"
+                                   class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        </div>
+                    </div>
+
+                    <!-- Duration -->
+                    <div>
+                        <label for="duration" class="block text-sm font-medium text-gray-700">
+                            Duration (seconds)
+                        </label>
+                        <input type="number" name="duration" id="duration" min="0"
+                               value="{{ song.duration or '' }}"
+                               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        <p class="mt-1 text-sm text-gray-500">Enter duration in seconds (e.g., 180 for 3 minutes)</p>
+                    </div>
+
+                    <!-- Audio URL -->
+                    <div>
+                        <label for="audio_url" class="block text-sm font-medium text-gray-700">
+                            Audio URL
+                        </label>
+                        <input type="url" name="audio_url" id="audio_url"
+                               value="{{ song.audio_url or '' }}"
+                               placeholder="https://example.com/song.mp3"
+                               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        <p class="mt-1 text-sm text-gray-500">Direct link to the audio file</p>
+                    </div>
+
+                    <!-- Features -->
+                    <div>
+                        <label for="features" class="block text-sm font-medium text-gray-700">
+                            Features / Description
+                        </label>
+                        <textarea name="features" id="features" rows="4"
+                                  class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                  placeholder="Enter song features, mood, or description for better recommendations...">{{ song.features or '' }}</textarea>
+                        <p class="mt-1 text-sm text-gray-500">Keywords help improve song recommendations (e.g., "upbeat energetic dance")</p>
+                    </div>
+                </div>
+
+                <div class="flex justify-end space-x-3 pt-6 border-t">
+                    <a href="{{ url_for('admin_songs') }}" 
+                       class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                        Cancel
+                    </a>
+                    <button type="submit" 
+                            class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        <i class="fas fa-save mr-2"></i>
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Now · SoundWave</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 40px;
+  background: white;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.07);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.nav-link {
+  text-decoration: none;
+  font-weight: 600;
+  color: #374151;
+  margin-left: 20px;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #4f46e5;
+}
+
+    :root{
+      --bg:#fbfdff;
+      --muted:#6b7280;
+      --accent:#111827;
+      --primary:#111827;
+      --glass: rgba(255,255,255,0.85);
+      --card-shadow: 0 12px 30px rgba(17,24,39,0.08);
+      --accent-gradient: linear-gradient(90deg,#667eea,#764ba2);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+      background:var(--bg);
+      color:var(--accent);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    /* top nav */
+    .topbar{
+      height:72px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 32px;
+      background: #fff;
+      border-bottom:1px solid #eff2f7;
+      position:sticky;
+      top:0;
+      z-index:40;
+    }
+    .brand{display:flex;align-items:center;gap:12px;font-weight:700;font-size:18px}
+    .brand .logo{
+      width:42px;height:42px;border-radius:10px;background:var(--accent-gradient);display:flex;align-items:center;justify-content:center;color:white;font-weight:800;box-shadow:0 6px 20px rgba(102,126,234,0.15)
+    }
+    .top-actions{display:flex;gap:18px;align-items:center}
+
+    /* layout */
+    .container{
+      max-width:1240px;margin:28px auto;padding:0 20px;
+    }
+    .layout{
+      display:grid;
+      grid-template-columns: 1fr 360px;
+      gap:28px;
+      align-items:start;
+    }
+
+    /* NOW PLAYING card */
+    .now-card{
+      display:flex;
+      gap:36px;
+      align-items:flex-start;
+      background:var(--glass);
+      border-radius:16px;
+      padding:28px;
+      box-shadow:var(--card-shadow);
+      min-height:320px;
+    }
+    .art{
+      width:420px;
+      max-width:42vw;
+      aspect-ratio:1/1;
+      border-radius:18px;
+      overflow:hidden;
+      background:linear-gradient(180deg,#111827,#222);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow: 0 20px 50px rgba(17,24,39,0.06);
+    }
+    .art img{width:100%;height:100%;object-fit:cover;display:block}
+
+    .now-meta{ flex:1; min-width:260px; display:flex; flex-direction:column; gap:18px}
+    .now-meta h1{font-size:42px;margin:0;line-height:1}
+    .now-meta .artist{color:var(--muted);font-weight:600}
+    .tags{display:flex;gap:12px;align-items:center}
+    .tag{background:#fff;padding:8px 12px;border-radius:999px;border:1px solid #eef2f7;color:var(--muted);font-weight:600;font-size:13px}
+
+    /* controls */
+    .controls{display:flex;flex-direction:column;gap:12px;margin-top:6px}
+    .progress-wrap{display:flex;flex-direction:column;gap:8px}
+    .progress{
+      height:12px;background:#eee;border-radius:999px;position:relative;overflow:hidden;
+    }
+    .progress .bar{height:100%;width:0%;background:linear-gradient(90deg,#0f172a,#667eea);border-radius:999px;transition:width 0.12s linear}
+    .time-row{display:flex;justify-content:space-between;color:var(--muted);font-size:13px}
+
+    .control-buttons{display:flex;align-items:center;gap:20px;margin-top:6px}
+    .big-play{
+      width:72px;height:72px;border-radius:999px;border:none;background:var(--accent-gradient);color:white;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;box-shadow:0 10px 30px rgba(102,126,234,0.2)
+    }
+    .icon-btn{width:42px;height:42px;border-radius:10px;border:none;background:#fff;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 6px 18px rgba(2,6,23,0.04)}
+    .small-muted{color:var(--muted);font-size:14px}
+
+    /* right column - recommended */
+    .right-panel{display:flex;flex-direction:column;gap:18px}
+    .panel-title{font-weight:700;display:flex;align-items:center;gap:10px}
+    .rec-list{display:flex;flex-direction:column;gap:12px}
+    .rec-item{
+      display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;background:#fff;border:1px solid #f1f5f9;cursor:pointer;transition:transform .12s,box-shadow .12s;
+    }
+    .rec-item:hover{transform:translateY(-4px);box-shadow:0 10px 30px rgba(2,6,23,0.06)}
+    .rec-thumb{width:64px;height:64px;border-radius:10px;overflow:hidden;background:#111}
+    .rec-thumb img{width:100%;height:100%;object-fit:cover}
+    .rec-info{flex:1}
+    .rec-info .title{font-weight:700}
+    .rec-info .sub{color:var(--muted);font-size:13px}
+
+    .rec-duration{color:var(--muted);font-size:13px}
+
+    /* Recently played (full width below) */
+    .recent-section{
+      margin-top:36px;
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+    }
+    .recent-title{font-weight:800;font-size:20px;display:flex;align-items:center;gap:10px}
+    .recent-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-top:6px}
+    .recent-card{background:white;border-radius:12px;padding:12px;display:flex;gap:12px;align-items:center;border:1px solid #f1f5f9}
+    .recent-thumb{width:72px;height:72px;border-radius:10px;overflow:hidden;background:#111}
+    .recent-thumb img{width:100%;height:100%;object-fit:cover}
+    .recent-info .title{font-weight:700}
+    .recent-info .sub{color:var(--muted);font-size:13px;margin-top:6px}
+
+    /* responsive */
+    @media (max-width:1000px){
+      .layout{grid-template-columns:1fr; padding-bottom:40px}
+      .art{width:220px}
+      .now-card{flex-direction:column;align-items:center;text-align:center}
+      .now-meta{align-items:center}
+      .right-panel{order:3}
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- top bar -->
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">♪</div>
+      <div>SoundWave</div>
+     
+    </div>
+    <div class="top-actions">
+      <a href="{{ url_for('home') }}" style="text-decoration:none;color:var(--muted);font-weight:600">Home</a>
+      <a href="{{ url_for('logout') }}" style="text-decoration:none;color:var(--muted);font-weight:600">Logout</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Page layout -->
+    <div class="layout">
+
+      <!-- left: Now Playing -->
+      <div>
+        <div class="now-card">
+          <div class="art" id="artWrap">
+            <!-- Jinja chooses current_song if available, else songs[0] -->
+            {% set active = current_song if current_song is defined else (recommendations[0] if recommendations and recommendations|length > 0 else None) %}
+            {% if active %}
+              {% if active.image_url %}
+                <img src="{{ active.image_url }}" alt="{{ active.title }}" id="nowArt">
+              {% else %}
+                <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:white;font-size:36px">🎵</div>
+              {% endif %}
+            {% else %}
+              <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:white;font-size:36px">🎶</div>
+            {% endif %}
+          </div>
+
+          <div class="now-meta">
+            <div>
+              <h1 id="nowTitle">{{ active.title if active else 'No song selected' }}</h1>
+              <div class="artist" id="nowArtist">{{ active.artist if active else '' }}</div>
+              <div style="color:var(--muted);margin-top:8px" id="nowAlbum">{{ active.album if active and active.album else '' }}</div>
+            </div>
+
+            <div class="tags" style="margin-top:8px">
+              <div class="tag" id="genreTag">{{ active.genre if active and active.genre else 'Unknown' }}</div>
+              <div class="tag small-muted" id="durationTag">{{ (active.duration|string) if active and active.duration else '' }}</div>
+            </div>
+
+            <div class="controls">
+              <div class="progress-wrap">
+                <div class="progress" id="progress">
+                  <div class="bar" id="progressBar" style="width:0%"></div>
+                </div>
+                <div class="time-row">
+                  <div id="timeCurrent">0:00</div>
+                  <div id="timeTotal">{{ active.duration if active and active.duration else '0:00' }}</div>
+                </div>
+              </div>
+
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <div class="control-buttons">
+                  <button class="icon-btn" id="shuffleBtn" title="Shuffle">🔀</button>
+                  <button class="icon-btn" id="prevBtn" title="Previous">⏮</button>
+                  <button class="big-play" id="playPauseBtn" title="Play / Pause">►</button>
+                  <button class="icon-btn" id="nextBtn" title="Next">⏭</button>
+                  <button class="icon-btn" id="repeatBtn" title="Repeat">🔁</button>
+                </div>
+
+                <div style="display:flex;align-items:center;gap:12px">
+                  <button class="icon-btn" id="likeBtn" title="Like">♡</button>
+                  <button class="icon-btn" id="addPlaylistBtn" title="Add to playlist">＋</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- recently played / other below -->
+        <div class="recent-section">
+          <div class="recent-title">⏱ Recently Played</div>
+          <div class="recent-grid" id="recentGrid">
+            {% if history %}
+              {% for h in history %}
+                <div class="recent-card" data-id="{{ h.id }}" data-url="{{ h.audio_url or '' }}" data-image="{{ h.image_url or '' }}" data-title="{{ h.title }}" data-artist="{{ h.artist }}" onclick="openAndPlayFromHome(this)">
+                  <div class="recent-thumb">
+                    {% if h.image_url %}
+                      <img src="{{ h.image_url }}" alt="{{ h.title }}">
+                    {% else %}
+                      <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center">🎵</div>
+                    {% endif %}
+                  </div>
+                  <div class="recent-info">
+                    <div class="title">{{ h.title }}</div>
+                    <div class="sub">{{ h.artist }} — {{ h.genre or '' }}</div>
+                  </div>
+                </div>
+              {% endfor %}
+            {% else %}
+              <div style="padding:18px;background:#fff;border-radius:12px;border:1px solid #f1f5f9">
+                <div style="color:var(--muted)">No recently played songs yet — start listening!</div>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- right: Recommended -->
+      <aside class="right-panel">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div class="panel-title">↗ Recommended</div>
+          <div style="color:var(--muted);font-size:14px">{{ recommendations|length if recommendations else 0 }} items</div>
+        </div>
+
+        <div class="rec-list" id="recList">
+          {% if recommendations %}
+            {% for s in recommendations %}
+              <div class="rec-item" data-id="{{ s.id }}" data-url="{{ s.audio_url or '' }}" data-image="{{ s.image_url or '' }}" data-title="{{ s.title }}" data-artist="{{ s.artist }}" onclick="openAndPlay(this)">
+                <div class="rec-thumb">
+                  {% if s.image_url %}
+                    <img src="{{ s.image_url }}" alt="{{ s.title }}">
+                  {% else %}
+                    <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center">🎵</div>
+                  {% endif %}
+                </div>
+                <div class="rec-info">
+                  <div class="title">{{ s.title }}</div>
+                  <div class="sub">{{ s.artist }}</div>
+                </div>
+                <div class="rec-duration">{{ s.duration or '' }}</div>
+              </div>
+            {% endfor %}
+          {% else %}
+            <div style="padding:14px;background:#fff;border-radius:12px;border:1px solid #f1f5f9;color:var(--muted)">No recommendations yet</div>
+          {% endif %}
+        </div>
+
+      </aside>
+    </div> <!-- layout -->
+  </div> <!-- container -->
+
+  <!-- Hidden audio element used to play -->
+  <audio id="player" preload="metadata"></audio>
+  
+  <!-- YouTube Player Container (hidden) -->
+  <div id="youtube-player" style="display:none;"></div>
+
+<script>
+  // Grab template-provided active song if present
+  const activeSong = {
+    id: "{{ active.id if active else '' }}",
+    title: `{{ (active.title|escape) if active else '' }}`,
+    artist: `{{ (active.artist|escape) if active else '' }}`,
+    album: `{{ (active.album|escape) if active and active.album else '' }}`,
+    audio_url: `{{ (active.audio_url|escape) if active and active.audio_url else '' }}`,
+    image_url: `{{ (active.image_url|escape) if active and active.image_url else '' }}`,
+    duration: `{{ (active.duration) if active and active.duration else '' }}`
+  };
+
+  const player = document.getElementById('player');
+  const playPauseBtn = document.getElementById('playPauseBtn');
+  const progressBar = document.getElementById('progressBar');
+  const timeCurrent = document.getElementById('timeCurrent');
+  const timeTotal = document.getElementById('timeTotal');
+  const nowTitle = document.getElementById('nowTitle');
+  const nowArtist = document.getElementById('nowArtist');
+  const nowAlbum = document.getElementById('nowAlbum');
+  const artWrap = document.getElementById('artWrap');
+  const nowArt = document.getElementById('nowArt');
+
+  let isPlaying = false;
+  let updateInterval = null;
+
+  function formatTime(secFloat){
+    if (!secFloat || isNaN(secFloat)) return '0:00';
+    const s = Math.floor(secFloat % 60);
+    const m = Math.floor(secFloat / 60);
+    return `${m}:${s.toString().padStart(2,'0')}`;
+  }
+
+  function setActiveUI(song){
+    if(!song) return;
+    nowTitle.textContent = song.title || 'Untitled';
+    nowArtist.textContent = song.artist || '';
+    nowAlbum.textContent = song.album || '';
+    timeTotal.textContent = song.duration ? song.duration : '0:00';
+
+    // image
+    const currentImg = document.getElementById('nowArt');
+    if(song.image_url && song.image_url.trim() !== ''){
+      if(currentImg){
+        currentImg.src = song.image_url;
+      } else {
+        artWrap.innerHTML = `<img src="${song.image_url}" alt="${song.title}" id="nowArt">`;
+      }
+    } else {
+      artWrap.innerHTML = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:white;font-size:36px">🎵</div>`;
+    }
+  }
+
+  function loadAndPlay(song){
+    if(!song) {
+      alert('No song selected.');
+      return;
+    }
+    
+    // If no audio_url, try YouTube playback
+    if(!song.audio_url || song.audio_url.trim() === '') {
+      loadAndPlayYouTube(song);
+      return;
+    }
+
+    // set UI
+    setActiveUI(song);
+
+    // set audio source
+    player.src = song.audio_url;
+    player.load();
+
+    // autoplay attempt
+    const playPromise = player.play();
+    if (playPromise !== undefined) {
+      playPromise.then(() => {
+        isPlaying = true;
+        playPauseBtn.textContent = '❚❚';
+      }).catch(err => {
+        // autoplay blocked — show play button
+        isPlaying = false;
+        playPauseBtn.textContent = '►';
+        console.warn('Autoplay prevented:', err);
+      });
+    }
+
+    // update progress
+    if(updateInterval) clearInterval(updateInterval);
+    updateInterval = setInterval(() => {
+      if(player.duration && !isNaN(player.duration)){
+        const pct = (player.currentTime / player.duration) * 100;
+        progressBar.style.width = `${pct}%`;
+        timeCurrent.textContent = formatTime(player.currentTime);
+        timeTotal.textContent = formatTime(player.duration);
+      }
+    }, 250);
+  }
+
+  // play/pause control
+  playPauseBtn.addEventListener('click', function(){
+    if(player.src === ''){
+      if(activeSong && activeSong.audio_url && activeSong.audio_url.trim() !== ''){
+        loadAndPlay(activeSong);
+        // send update to server for play
+        recordPlayOnServer(activeSong.id);
+        return;
+      } else {
+        // Try to play the first recommended song
+        const firstRecommendedCard = document.querySelector('[data-id][data-url]');
+        if(firstRecommendedCard){
+          openAndPlay(firstRecommendedCard);
+          return;
+        } else {
+          alert('No song selected to play.');
+          return;
+        }
+      }
+    }
+    if(player.paused){
+      player.play().then(()=>{ playPauseBtn.textContent='❚❚'; }).catch(()=>{});
+      isPlaying = true;
+    } else {
+      player.pause();
+      playPauseBtn.textContent='►';
+      isPlaying = false;
+    }
+  });
+
+  // progress clickable
+  document.getElementById('progress').addEventListener('click', function(e){
+    if(!player.duration) return;
+    const rect = this.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const pct = x / rect.width;
+    player.currentTime = player.duration * pct;
+  });
+
+  // previous / next (basic)
+  document.getElementById('prevBtn').addEventListener('click', function(){
+    // simply rewind 10s
+    player.currentTime = Math.max(0, player.currentTime - 10);
+  });
+  document.getElementById('nextBtn').addEventListener('click', function(){
+    // jump forward 10s
+    if(player.duration) player.currentTime = Math.min(player.duration, player.currentTime + 10);
+  });
+
+  // when audio ends, reset
+  player.addEventListener('ended', function(){
+    playPauseBtn.textContent = '►';
+    isPlaying = false;
+    progressBar.style.width = '0%';
+  });
+
+  // click recommended item -> play
+  function openAndPlay(el){
+    const song = {
+      id: el.dataset.id,
+      title: el.dataset.title,
+      artist: el.dataset.artist,
+      audio_url: el.dataset.url,
+      image_url: el.dataset.image
+    };
+    // update activeSong object for later use
+    activeSong.id = song.id;
+    activeSong.title = song.title;
+    activeSong.artist = song.artist;
+    activeSong.audio_url = song.audio_url;
+    activeSong.image_url = song.image_url;
+
+    // navigate to same dashboard route for deep link (optional):
+    // If you want to change the url to /dashboard/<songId> (so user can bookmark), uncomment:
+    // window.history.pushState({}, '', `/dashboard/${song.id}`);
+
+    loadAndPlay(song);
+    recordPlayOnServer(song.id);
+  }
+  // Like a song
+document.getElementById('likeBtn').addEventListener('click', function() {
+  if (!activeSong.id) {
+    alert('No song selected.');
+    return;
+  }
+  fetch(`/like_song/${activeSong.id}`, {
+    method: 'POST'
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      alert('💖 Song added to your likes!');
+    } else {
+      alert('⚠️ ' + data.message);
+    }
+  })
+  .catch(err => console.error('Error liking song:', err));
+});
+
+// Add song to playlist
+document.getElementById('addPlaylistBtn').addEventListener('click', function() {
+  if (!activeSong.id) {
+    alert('No song selected.');
+    return;
+  }
+
+  const playlistName = prompt('Enter playlist name:');
+  if (!playlistName) return;
+
+  fetch(`/add_to_playlist/${activeSong.id}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ playlist_name: playlistName })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      alert(`🎶 Added to playlist "${playlistName}"!`);
+    } else {
+      alert('⚠️ ' + data.message);
+    }
+  })
+  .catch(err => console.error('Error adding to playlist:', err));
+});
+
+
+  // open and play from recently played card
+  function openAndPlayFromHome(el){
+    openAndPlay(el);
+    // scroll up to now playing
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  // call server to store listening history + update recommendations
+  function recordPlayOnServer(songId){
+    if(!songId) return;
+    fetch(`/update_recommendation/${songId}`, {
+      method:'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({})
+    })
+    .then(r => r.json())
+    .then(data => {
+      if(data.success){
+        // update UI lists if server returned new lists
+        if(data.recently_played){
+          renderRecentlyPlayedFromServer(data.recently_played);
+        }
+        if(data.recommendations){
+          renderRecommendationsFromServer(data.recommendations);
+        }
+      } else {
+        console.warn('Server rejected update:', data.error);
+      }
+    }).catch(err => console.warn('Network/update error',err));
+  }
+
+  // helpers to re-render lists from server responses
+  function renderRecommendationsFromServer(list){
+    const container = document.getElementById('recList');
+    if(!Array.isArray(list)) return;
+    container.innerHTML = '';
+    list.forEach(s => {
+      const div = document.createElement('div');
+      div.className = 'rec-item';
+      div.setAttribute('data-id', s.id || '');
+      div.setAttribute('data-url', s.audio_url || '');
+      div.setAttribute('data-image', s.image_url || '');
+      div.setAttribute('data-title', s.title || '');
+      div.setAttribute('data-artist', s.artist || '');
+      div.onclick = () => openAndPlay(div);
+      const thumb = `<div class="rec-thumb">${ s.image_url ? `<img src="${s.image_url}" alt="">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center">🎵</div>`}</div>`;
+      const info = `<div class="rec-info"><div class="title">${s.title}</div><div class="sub">${s.artist || ''}</div></div>`;
+      const dur = `<div class="rec-duration">${s.duration || ''}</div>`;
+      div.innerHTML = thumb + info + dur;
+      container.appendChild(div);
+    });
+  }
+
+  function renderRecentlyPlayedFromServer(list){
+    const container = document.getElementById('recentGrid');
+    if(!Array.isArray(list)) return;
+    container.innerHTML = '';
+    list.forEach(h => {
+      const card = document.createElement('div');
+      card.className = 'recent-card';
+      card.setAttribute('data-id', h.id || '');
+      card.setAttribute('data-url', h.audio_url || '');
+      card.setAttribute('data-image', h.image_url || '');
+      card.setAttribute('data-title', h.title || '');
+      card.setAttribute('data-artist', h.artist || '');
+      card.onclick = () => openAndPlayFromHome(card);
+      const thumb = `<div class="recent-thumb">${ h.image_url ? `<img src="${h.image_url}" alt="">` : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center">🎵</div>`}</div>`;
+      const info = `<div class="recent-info"><div class="title">${h.title}</div><div class="sub">${h.artist || ''} — ${h.genre || ''}</div></div>`;
+      card.innerHTML = thumb + info;
+      container.appendChild(card);
+    });
+  }
+
+  // On page load, if activeSong has audio set, try to play
+  document.addEventListener('DOMContentLoaded', function(){
+    if(activeSong && activeSong.audio_url && activeSong.audio_url.trim() !== ''){
+      // small delay ensures audio element attached and browsers ready
+      setTimeout(() => {
+        loadAndPlay(activeSong);
+        // record play once on load (so clicking from home triggers)
+        if(activeSong.id){
+          recordPlayOnServer(activeSong.id);
+        }
+      }, 200);
+    }
+  });
+  
+
+  // ========== YouTube Player Integration ==========
+  let ytPlayer = null;
+  let ytPlayerReady = false;
+  let pendingSong = null;
+
+  // Load YouTube IFrame API
+  const tag = document.createElement('script');
+  tag.src = 'https://www.youtube.com/iframe_api';
+  const firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+  // YouTube API ready callback
+  function onYouTubeIframeAPIReady() {
+    ytPlayer = new YT.Player('youtube-player', {
+      height: '0',
+      width: '0',
+      playerVars: {
+        'autoplay': 1,
+        'controls': 0,
+        'rel': 0
+      },
+      events: {
+        'onReady': onPlayerReady,
+        'onStateChange': onPlayerStateChange
+      }
+    });
+  }
+
+  function onPlayerReady(event) {
+    ytPlayerReady = true;
+    if (pendingSong) {
+      playYouTubeSong(pendingSong);
+      pendingSong = null;
+    }
+  }
+
+  function onPlayerStateChange(event) {
+    if (event.data == YT.PlayerState.PLAYING) {
+      isPlaying = true;
+      playPauseBtn.textContent = '❚❚';
+      startYouTubeProgressUpdate();
+    } else if (event.data == YT.PlayerState.PAUSED) {
+      isPlaying = false;
+      playPauseBtn.textContent = '►';
+    } else if (event.data == YT.PlayerState.ENDED) {
+      isPlaying = false;
+      playPauseBtn.textContent = '►';
+      progressBar.style.width = '0%';
+    }
+  }
+
+  function loadAndPlayYouTube(song) {
+    setActiveUI(song);
+    
+    // Stop regular audio player if playing
+    if (player.src) {
+      player.pause();
+      player.src = '';
+    }
+    
+    if (!ytPlayerReady) {
+      pendingSong = song;
+      playPauseBtn.textContent = '⏳';
+      return;
+    }
+    
+    playYouTubeSong(song);
+  }
+
+  function playYouTubeSong(song) {
+    // For now, directly use demo mode
+    // YouTube integration can be added later with API key
+    showDemoPlayback(song);
+  }
+
+  function showDemoPlayback(song) {
+    setActiveUI(song);
+    playPauseBtn.textContent = '►';
+    
+    // Show notification
+    const notification = document.createElement('div');
+    notification.style.cssText = 'position:fixed;top:20px;right:20px;background:#4f46e5;color:white;padding:16px 24px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.2);z-index:9999;animation:slideIn 0.3s ease;';
+    notification.innerHTML = `
+      <div style="font-weight:700;margin-bottom:4px">🎵 Demo Mode</div>
+      <div style="font-size:14px;opacity:0.9">Playing: ${song.title}</div>
+      <div style="font-size:12px;opacity:0.7;margin-top:4px">Audio file not available - showing demo playback</div>
+    `;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+      notification.style.animation = 'slideOut 0.3s ease';
+      setTimeout(() => notification.remove(), 300);
+    }, 4000);
+    
+    // Simulate playback
+    simulatePlayback(song);
+  }
+
+  function simulatePlayback(song) {
+    // Simulate a 3-minute song
+    const duration = song.duration || 180;
+    let currentTime = 0;
+    
+    playPauseBtn.textContent = '❚❚';
+    isPlaying = true;
+    
+    if (updateInterval) clearInterval(updateInterval);
+    updateInterval = setInterval(() => {
+      if (!isPlaying) return;
+      
+      currentTime += 0.25;
+      if (currentTime >= duration) {
+        currentTime = duration;
+        clearInterval(updateInterval);
+        playPauseBtn.textContent = '►';
+        isPlaying = false;
+        progressBar.style.width = '100%';
+        return;
+      }
+      
+      const pct = (currentTime / duration) * 100;
+      progressBar.style.width = `${pct}%`;
+      timeCurrent.textContent = formatTime(currentTime);
+      timeTotal.textContent = formatTime(duration);
+    }, 250);
+    
+    // Store current playback state
+    window.demoPlayback = {
+      duration: duration,
+      getCurrentTime: () => currentTime,
+      setCurrentTime: (time) => { currentTime = time; }
+    };
+  }
+
+  function startYouTubeProgressUpdate() {
+    if (updateInterval) clearInterval(updateInterval);
+    updateInterval = setInterval(() => {
+      if (ytPlayer && ytPlayer.getDuration) {
+        const duration = ytPlayer.getDuration();
+        const current = ytPlayer.getCurrentTime();
+        if (duration && !isNaN(duration)) {
+          const pct = (current / duration) * 100;
+          progressBar.style.width = `${pct}%`;
+          timeCurrent.textContent = formatTime(current);
+          timeTotal.textContent = formatTime(duration);
+        }
+      }
+    }, 250);
+  }
+
+  // Update play/pause button to handle YouTube
+  const originalPlayPauseHandler = playPauseBtn.onclick;
+  playPauseBtn.onclick = function() {
+    // Check if YouTube player is active
+    if (ytPlayer && ytPlayerReady && ytPlayer.getPlayerState) {
+      const state = ytPlayer.getPlayerState();
+      if (state === YT.PlayerState.PLAYING) {
+        ytPlayer.pauseVideo();
+        return;
+      } else if (state === YT.PlayerState.PAUSED) {
+        ytPlayer.playVideo();
+        return;
+      }
+    }
+    
+    // Check if demo mode is active
+    if (window.demoPlayback) {
+      isPlaying = !isPlaying;
+      playPauseBtn.textContent = isPlaying ? '❚❚' : '►';
+      if (isPlaying) {
+        simulatePlayback(activeSong);
+      }
+      return;
+    }
+    
+    // Otherwise use original handler
+    originalPlayPauseHandler.call(this);
+  };
+
+  // Update progress click to handle demo mode
+  const progressEl = document.getElementById('progress');
+  const originalProgressClick = progressEl.onclick;
+  progressEl.onclick = function(e) {
+    if (window.demoPlayback) {
+      const rect = this.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const pct = x / rect.width;
+      const newTime = window.demoPlayback.duration * pct;
+      window.demoPlayback.setCurrentTime(newTime);
+      return;
+    }
+    
+    if (ytPlayer && ytPlayerReady && ytPlayer.getDuration) {
+      const duration = ytPlayer.getDuration();
+      if (duration) {
+        const rect = this.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const pct = x / rect.width;
+        ytPlayer.seekTo(duration * pct);
+        return;
+      }
+    }
+    
+    originalProgressClick.call(this, e);
+  };
+
+  // Add CSS animations
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes slideIn {
+      from { transform: translateX(400px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOut {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(400px); opacity: 0; }
+    }
+  `;
+  document.head.appendChild(style);
+
+</script>
+</body>
+</html>

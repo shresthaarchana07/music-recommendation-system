@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Select Your Preferences</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;700&display=swap">
+  <style>
+    :root {
+      --color1: #C99757;  /* Golden Brown */
+      --color2: #8D914F;  /* Olive Green */
+      --color3: #57855B;  /* Medium Green */
+      --color4: #2E7367;  /* Teal */
+      --color5: #235E67;  /* Deep Teal */
+      --color6: #2F4858;  /* Slate Blue-Grey */
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, var(--color1), var(--color4));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background-color: rgba(47, 72, 88, 0.95); /* dark container */
+      padding: 2.5rem 2rem;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    h2 {
+      margin-bottom: 1.5rem;
+      color: var(--color1);
+    }
+
+    .genre-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 1.5rem;
+    }
+
+    input[type="checkbox"] {
+      display: none;
+    }
+
+    label {
+      background: white;
+      color: var(--color6);
+      padding: 10px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 0.95rem;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    input[type="checkbox"]:checked + label {
+      background-color: var(--color2);
+      color: white;
+    }
+
+    button {
+      padding: 0.8rem 1.5rem;
+      font-size: 1rem;
+      background: var(--color1);
+      color: var(--color6);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: var(--color2);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Select Your Favorite Genres</h2>
+    <form method="POST" action="/preferences">
+      <div class="genre-list">
+        {% for genre in ['Pop', 'Rock', 'Hip Hop', 'Electronic', 'Jazz', 'Classical', 'Country', 'R&B', 'Nepali', 'Hindi'] %}
+          <input type="checkbox" id="{{ genre }}" name="genres" value="{{ genre }}">
+          <label for="{{ genre }}">{{ genre }}</label>
+        {% endfor %}
+      </div>
+      <button type="submit">Continue</button>
+    </form>
+  </div>
+</body>
+</html>

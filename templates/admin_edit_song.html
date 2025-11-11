@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Song - Admin | SoundWave</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', Arial, sans-serif;
+      background: linear-gradient(135deg, #f0f4ff, #ffffff);
+      color: #1f2937;
+      min-height: 100vh;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 40px;
+      background: white;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.07);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .logo {
+      font-size: 22px;
+      font-weight: 800;
+      color: #4f46e5;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .nav-links a {
+      margin: 0 15px;
+      text-decoration: none;
+      font-weight: 600;
+      color: #374151;
+      transition: color 0.3s ease;
+    }
+    .nav-links a:hover { color: #4f46e5; }
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 40px;
+    }
+    h1 {
+      font-size: 32px;
+      font-weight: 800;
+      color: #1e1b4b;
+      margin-bottom: 10px;
+    }
+    .subtitle {
+      color: #6b7280;
+      margin-bottom: 30px;
+      font-size: 15px;
+    }
+    .flash-messages { margin-bottom: 20px; }
+    .flash {
+      padding: 12px 20px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      font-weight: 500;
+    }
+    .flash.error {
+      background: #fee2e2;
+      color: #991b1b;
+      border-left: 4px solid #ef4444;
+    }
+    .form-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      padding: 40px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      color: #1e1b4b;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    label .required {
+      color: #ef4444;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: 'Inter', Arial, sans-serif;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+    input:focus, textarea:focus, select:focus {
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 3px rgba(79,70,229,0.2);
+    }
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .form-actions {
+      display: flex;
+      gap: 15px;
+      margin-top: 30px;
+    }
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      color: white;
+      flex: 1;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(79, 70, 229, 0.3);
+    }
+    .btn-secondary {
+      background: #f3f4f6;
+      color: #374151;
+      flex: 1;
+    }
+    .btn-secondary:hover {
+      background: #e5e7eb;
+    }
+    .help-text {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+    .song-id-badge {
+      display: inline-block;
+      background: #e0e7ff;
+      color: #4f46e5;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">🎵 SoundWave Admin</div>
+    <div class="nav-links">
+      <a href="/admin/songs">← Back to Songs</a>
+      <a href="/home">Home</a>
+      <a href="/logout">Logout</a>
+    </div>
+  </header>
+
+  <div class="container">
+    <h1>✏️ Edit Song <span class="song-id-badge">ID: {{ song.id }}</span></h1>
+    <p class="subtitle">Update song details</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-messages">
+          {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <div class="form-card">
+      <form method="POST" action="/admin/songs/edit/{{ song.id }}">
+        <div class="form-group">
+          <label>Title <span class="required">*</span></label>
+          <input type="text" name="title" required placeholder="Enter song title" value="{{ song.title }}">
+        </div>
+
+        <div class="form-group">
+          <label>Artist <span class="required">*</span></label>
+          <input type="text" name="artist" required placeholder="Enter artist name" value="{{ song.artist }}">
+        </div>
+
+        <div class="form-group">
+          <label>Album</label>
+          <input type="text" name="album" placeholder="Enter album name (optional)" value="{{ song.album or '' }}">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Genre <span class="required">*</span></label>
+            <select name="genre" required>
+              <option value="">Select genre</option>
+              <option value="Pop" {% if song.genre == 'Pop' %}selected{% endif %}>Pop</option>
+              <option value="Rock" {% if song.genre == 'Rock' %}selected{% endif %}>Rock</option>
+              <option value="Hip-Hop" {% if song.genre == 'Hip-Hop' %}selected{% endif %}>Hip-Hop</option>
+              <option value="Rap" {% if song.genre == 'Rap' %}selected{% endif %}>Rap</option>
+              <option value="Jazz" {% if song.genre == 'Jazz' %}selected{% endif %}>Jazz</option>
+              <option value="Classical" {% if song.genre == 'Classical' %}selected{% endif %}>Classical</option>
+              <option value="Electronic" {% if song.genre == 'Electronic' %}selected{% endif %}>Electronic</option>
+              <option value="Country" {% if song.genre == 'Country' %}selected{% endif %}>Country</option>
+              <option value="R&B" {% if song.genre == 'R&B' %}selected{% endif %}>R&B</option>
+              <option value="Blues" {% if song.genre == 'Blues' %}selected{% endif %}>Blues</option>
+              <option value="Reggae" {% if song.genre == 'Reggae' %}selected{% endif %}>Reggae</option>
+              <option value="Metal" {% if song.genre == 'Metal' %}selected{% endif %}>Metal</option>
+              <option value="Folk" {% if song.genre == 'Folk' %}selected{% endif %}>Folk</option>
+              <option value="Indie" {% if song.genre == 'Indie' %}selected{% endif %}>Indie</option>
+              <option value="Soul" {% if song.genre == 'Soul' %}selected{% endif %}>Soul</option>
+              <option value="Other" {% if song.genre == 'Other' %}selected{% endif %}>Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Year</label>
+            <input type="number" name="year" min="1900" max="2100" placeholder="e.g., 2024" value="{{ song.year or '' }}">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Duration (seconds)</label>
+          <input type="number" name="duration" min="0" placeholder="e.g., 180 (for 3 minutes)" value="{{ song.duration or '' }}">
+          <div class="help-text">Enter duration in seconds (e.g., 180 for 3 minutes)</div>
+        </div>
+
+        <div class="form-group">
+          <label>Audio URL</label>
+          <input type="url" name="audio_url" placeholder="https://example.com/song.mp3" value="{{ song.audio_url or '' }}">
+          <div class="help-text">Direct link to the audio file (optional)</div>
+        </div>
+
+        <div class="form-group">
+          <label>Features / Description</label>
+          <textarea name="features" placeholder="Enter song features, mood, or description for better recommendations...">{{ song.features or '' }}</textarea>
+          <div class="help-text">Keywords help improve song recommendations (e.g., "upbeat energetic dance")</div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">💾 Save Changes</button>
+          <a href="/admin/songs" class="btn btn-secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
